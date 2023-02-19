@@ -1,4 +1,4 @@
-/* Задания на урок:
+/* Задания на урок: practice_work-6
 
 1) Удалить все рекламные блоки со страницы (правая часть сайта)
 
@@ -14,52 +14,133 @@
 
 'use strict';
 
-const movieDB = {
-    movies: [
-        "Логан",
-        "Лига справедливости",
-        "Ла-ла лэнд",
-        "Одержимость",
-        "Скотт Пилигрим против..."
-    ]
-};
+document.addEventListener('DOMContentLoaded', () => {
+    const movieDB = {
+        movies: [
+            "Логан",
+            "Лига справедливости",
+            "Ла-ла лэнд",
+            "Одержимость",
+            "Скотт Пилигрим против..."
+        ]
+    };
+    
+    // 1) Удалить все рекламные блоки со страницы (правая часть сайта)
+    // const advertisementContainer = document.querySelectorAll('.promo__adv')
+    // advertisementContainer.forEach(item => {
+    //     item.querySelectorAll('img').forEach(photo => {
+    //         photo.remove()
+    //     })
+    // })
+    
+    const adv = document.querySelectorAll('.promo__adv img')
 
-// 1) Удалить все рекламные блоки со страницы (правая часть сайта)
-// const advertisementContainer = document.querySelectorAll('.promo__adv')
-// advertisementContainer.forEach(item => {
-//     item.querySelectorAll('img').forEach(photo => {
-//         photo.remove()
-//     })
-// })
+    const deleteAdv = (arr) => {
+        arr.forEach(item => {
+            item.remove()
+        })
+    }
 
-const adv = document.querySelectorAll('.promo__adv img')
-adv.forEach(item => {
-    item.remove()
+    deleteAdv(adv)
+    
+    
+    // 2) Изменить жанр фильма, поменять "комедия" на "драма" 
+    // const genre = document.querySelector('.promo__genre') 
+    // genre.replaceWith('ДРАМА')
+    const poster = document.querySelector('.promo__bg')
+    const genre = poster.querySelector('.promo__genre')
+
+    const someChanges = () => {
+        genre.textContent = 'драма'
+    
+        // 3) Изменить задний фон постера с фильмом на изображение "bg.jpg".
+        poster.style.backgroundImage = 'url("img/bg.jpg")';
+        // poster.style.cssText = 'background-image: url("img/bg.jpg")';
+    }
+
+    someChanges()
+    // 4) Список фильмов на странице сформировать на основании данных из этого JS файла.
+    // Отсортировать их по алфавиту 
+    
+    const movieList = document.querySelector('.promo__interactive-list')
+
+    const sortArr = (arr) => {
+        arr.sort()
+    }
+
+    function createMovieList(films, parent) {
+        parent.innerHTML = '';
+        sortArr(films)
+        
+        films.forEach((film, i) => {
+            parent.innerHTML += `
+                <li class="promo__interactive-item">${i + 1}. ${film}
+                    <div class="delete"></div>
+                </li>`
+        })
+
+        document.querySelectorAll('.delete').forEach((btn, i) => {
+            btn.addEventListener('click', () => {
+                btn.parentElement.remove()
+                movieDB.movies.splice(i, 1)
+                createMovieList(films, parent)
+            })
+        })
+
+        
+    }
+
+    createMovieList(movieDB.movies, movieList)
+    
+    
+    /* Задания на урок: practice_work-7
+    
+    1) Реализовать функционал, что после заполнения формы и нажатия кнопки "Подтвердить" - 
+    новый фильм добавляется в список. Страница не должна перезагружаться.
+    Новый фильм должен добавляться в movieDB.movies.
+    Для получения доступа к значению input - обращаемся к нему как input.value;
+    P.S. Здесь есть несколько вариантов решения задачи, принимается любой, но рабочий.
+    
+    2) Если название фильма больше, чем 21 символ - обрезать его и добавить три точки
+    
+    3) При клике на мусорную корзину - элемент будет удаляться из списка (сложно)
+    
+    4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение: 
+    "Добавляем любимый фильм"
+    
+    5) Фильмы должны быть отсортированы по алфавиту */
+    
+    // Возьмите свой код из предыдущей практики
+    
+
+    const addForm = document.querySelector('form.add'),
+          addInput = addForm.querySelector('.adding__input'),
+          checkbox = addForm.querySelector('[type="checkbox"]')
+        //   button = document.querySelector('button')
+    
+    addForm.addEventListener('submit', (e) => {
+        e.preventDefault()
+    
+        let newFilm = addInput.value
+        const favorite = checkbox.checked;
+
+        if (newFilm) {
+
+            if(newFilm.length > 21) {
+                newFilm = `${newFilm.substring(0, 22)}...`
+            }
+
+            if(favorite){
+                console.log('Добавляем любимый фильм');
+            }
+            movieDB.movies.push(newFilm)
+            sortArr(movieDB.movies) 
+            createMovieList(movieDB.movies, movieList)
+        }
+
+        e.target.reset()
+    })
+    
 })
 
-
-// 2) Изменить жанр фильма, поменять "комедия" на "драма" 
-// const genre = document.querySelector('.promo__genre') 
-// genre.replaceWith('ДРАМА')
-const poster = document.querySelector('.promo__bg')
-const genre = poster.querySelector('.promo__genre')
-genre.textContent = 'драма'
-
-// 3) Изменить задний фон постера с фильмом на изображение "bg.jpg".
-poster.style.backgroundImage = 'url("img/bg.jpg")';
-// poster.style.cssText = 'background-image: url("img/bg.jpg")';
-
-// 4) Список фильмов на странице сформировать на основании данных из этого JS файла.
-// Отсортировать их по алфавиту 
-
-const movieList = document.querySelector('.promo__interactive-list')
-movieList.innerHTML = '';
-movieDB.movies.sort()
-
-movieDB.movies.forEach((film, i) => {
-    movieList.innerHTML += `
-        <li class="promo__interactive-item">${i + 1}. ${film}
-            <div class="delete"></div>
-        </li>`
-})
 
